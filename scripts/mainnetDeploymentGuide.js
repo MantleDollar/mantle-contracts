@@ -116,7 +116,7 @@ async function main() {
 
   //Deploy mUSDC
   mUSDCContract = await mUSDFactory.deploy(
-    USDCERC20Contract.address, //address underlying_
+    "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8", //address underlying_ (USDC on Arbitrum)
     unitrollerContract.address, //ComptrollerInterface comptroller_
     USDCJumpRateModelContract.address, //InterestRateModel interestRateModel_
     "200000000000000000", //uint initialExchangeRateMantissa_
@@ -151,7 +151,7 @@ async function main() {
     "contracts/InverseFinance/Stabilizer.sol:Stabilizer"
   );
   stabilizerContract = await stabilizerFactory.deploy(
-    ERC20Contract.address, // CORE address
+    COREContract.address, // CORE address
     "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1", // DAI (Arbitrum)
     100, // 1% buy fee
     100, // 1% sell fee
@@ -182,13 +182,7 @@ async function main() {
     "18"
   );
   await setEthPriceTx.wait();
-  //Set wBTC price feed (Chainlink)
-  const setBTCPriceTx = await oracleContract.setFeed(
-    mEtherContract.address,
-    "0x6ce185860a4963106506c203335a2910413708e9",
-    "18"
-  );
-  await setEthPriceTx.wait();
+
   console.log("Price Feeds configured");
 
   //Set the oracle for price queries
@@ -237,7 +231,7 @@ async function main() {
   //Set the CollateralFactor for USDC
   const setCollateralFactor3Tx = await comptrollerContract._setCollateralFactor(
     mUSDCContract.address,
-    ethers.utils.parseEther("0.75")
+    ethers.utils.parseEther("0.85")
   );
   await setCollateralFactor3Tx.wait();
   //Set the IMFFactor for CORE
