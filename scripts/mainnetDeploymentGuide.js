@@ -280,7 +280,7 @@ async function main() {
   //Allow Fed to mint the CORE
   var addMinterTx = await COREContract.addMinter(fedContract.address);
   await addMinterTx.wait();
-  console.log("Test Minters set");
+  console.log("Fed Minters set");
 
   //fed expension (minting 10mil CORE tokens and depositing them into the protocol)
   const expansionTx = await fedContract.expansion(

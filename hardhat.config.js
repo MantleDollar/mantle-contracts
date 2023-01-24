@@ -16,18 +16,18 @@ module.exports = {
     hardhat: {
       forking: {
         url: "https://arb-mainnet.g.alchemy.com/v2/lqEIXiFJz2CT7ObmV1-TfkCJ95z2wlsL",
-        accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
+        accounts: [process.env.PRIVATE_KEY],
       },
     },
-    goerli: {
-      url: process.env.GOERLI_URL,
-      //Consider any address posted here to be compromised
-      accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
-    },
+    // goerli: {
+    //   url: process.env.GOERLI_URL,
+    //   //Consider any address posted here to be compromised
+    //   accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
+    // },
     arbitrum: {
       url: process.env.ARBITRUM_URL,
       //Consider any address posted here to be compromised
-      accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
+      accounts: [process.env.PRIVATE_KEY],
     },
   },
   solidity: {
