@@ -12,7 +12,7 @@ async function main() {
   var mUSDCContract;
   var fedContract;
   var oracleContract;
-  var mEtherContract;
+  var mEVMOSContract;
   var WhitePaperModelContract;
 
   ////////////////////////////////////////
@@ -106,7 +106,7 @@ async function main() {
     unitrollerContract.address, //ComptrollerInterface comptroller_
     JumpRateModelContract.address, //InterestRateModel interestRateModel_
     "200000000000000000", //uint initialExchangeRateMantissa_
-    "mantle deposited CORE", //string memory name_
+    "Mantle Deposited CORE", //string memory name_
     "mUSD", //string memory symbol_
     "8", //uint8 decimals_
     delegateContract.address, //address implementation
@@ -116,11 +116,11 @@ async function main() {
 
   //Deploy mUSDC
   mUSDCContract = await mUSDFactory.deploy(
-    "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8", //address underlying_ (USDC on Arbitrum)
+    "0x51e44ffad5c2b122c8b635671fcc8139dc636e82", //address underlying_ (USDC on Evmos, not sure which bridge though)
     unitrollerContract.address, //ComptrollerInterface comptroller_
     USDCJumpRateModelContract.address, //InterestRateModel interestRateModel_
     "200000000000000000", //uint initialExchangeRateMantissa_
-    "mantle deposited USDC", //string memory name_
+    "Mantle Deposited USDC", //string memory name_
     "mUSDC", //string memory symbol_
     "8", //uint8 decimals_
     delegateContract.address, //address implementation
@@ -129,16 +129,16 @@ async function main() {
   await mUSDCContract.deployTransaction.wait();
 
   //Deploy mETH
-  const mEtherFactory = await ethers.getContractFactory("CEther");
-  mEtherContract = await mEtherFactory.deploy(
+  const mEVMOSFactory = await ethers.getContractFactory("CEther");
+  mEVMOSContract = await mEVMOSFactory.deploy(
     unitrollerContract.address, //ComptrollerInterface comptroller_
     WhitePaperModelContract.address, //InterestRateModel interestRateModel_
     "200000000000000000", //uint initialExchangeRateMantissa_
-    "mantle deposited ETH", //string memory name_
-    "mETH", //string memory symbol_
+    "Mantle Deposited EVMOS", //string memory name_
+    "mEVMOS", //string memory symbol_
     "8" //uint8 decimals_
   );
-  await mEtherContract.deployTransaction.wait();
+  await mEVMOSContract.deployTransaction.wait();
   console.log("mTokens Deployed");
 
   //Deploy Fed
@@ -152,7 +152,7 @@ async function main() {
   );
   stabilizerContract = await stabilizerFactory.deploy(
     COREContract.address, // CORE address
-    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1", // DAI (Arbitrum)
+    "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1", // DAI (Arbitrum) CHANGE
     100, // 1% buy fee
     100, // 1% sell fee
     ethers.utils.parseEther("15000000") // 15 mil supply
@@ -162,7 +162,8 @@ async function main() {
   //Configurations
   ////////////////////////////////////////
 
-  //Set USDC price feed (Chainlink)
+  //Set axlUSDC price feed (Chainlink right now)
+  // CHANGE
   const setUSDCPriceTx = await oracleContract.setFeed(
     mUSDCContract.address,
     "0x50834f3163758fcc1df9973b6e91f0f0f0434ad3",
@@ -176,8 +177,9 @@ async function main() {
   );
   await setSynthPriceTx.wait();
   //Set Ethereum price feed (Chainlink)
+  // CHANGE
   const setEthPriceTx = await oracleContract.setFeed(
-    mEtherContract.address,
+    mEVMOSContract.address,
     "0x639fe6ab55c921f74e7fac1ee960c0b6293ba612",
     "18"
   );
@@ -198,7 +200,7 @@ async function main() {
   //Set Liquidation Incentive
   const setLiquidationIncentiveTx =
     await comptrollerContract._setLiquidationIncentive(
-      ethers.utils.parseEther("5")
+      ethers.utils.parseEther("8")
     );
   await setLiquidationIncentiveTx.wait();
   //Create CORE Market
@@ -208,7 +210,7 @@ async function main() {
   await setERC20MarketTx.wait();
   //Create ETH Market
   const setEthMarketTx = await comptrollerContract._supportMarket(
-    mEtherContract.address
+    mEVMOSContract.address
   );
   await setEthMarketTx.wait();
   //Create USDC Market
@@ -224,7 +226,7 @@ async function main() {
   await setCollateralFactor1Tx.wait();
   //Set the CollateralFactor for Eth
   const setCollateralFactor2Tx = await comptrollerContract._setCollateralFactor(
-    mEtherContract.address,
+    mEVMOSContract.address,
     ethers.utils.parseEther("0.75")
   );
   await setCollateralFactor2Tx.wait();
@@ -242,7 +244,7 @@ async function main() {
   await setIMFFactor1Tx.wait();
   //Set the IMFFactor for ETH
   const setIMFFactor2Tx = await comptrollerContract._setIMFFactor(
-    mEtherContract.address,
+    mEVMOSContract.address,
     ethers.utils.parseEther("0.04")
   );
   await setIMFFactor2Tx.wait();
@@ -266,7 +268,7 @@ async function main() {
   );
   await setReserveFactor1Tx.wait();
   //Set the ReserveFactor for ETH
-  const setReserveFactor2Tx = await mEtherContract._setReserveFactor(
+  const setReserveFactor2Tx = await mEVMOSContract._setReserveFactor(
     ethers.utils.parseEther("0.5")
   );
   await setReserveFactor2Tx.wait();
@@ -294,7 +296,7 @@ async function main() {
   await accrueTx.wait();
   var accrueTx = await mUSDCContract.accrueInterest();
   await accrueTx.wait();
-  var accrueTx = await mEtherContract.accrueInterest();
+  var accrueTx = await mEVMOSContract.accrueInterest();
   await accrueTx.wait();
   console.log("Interests accrued");
 
@@ -315,7 +317,7 @@ async function main() {
   console.log("CORE interestrate model:   " + JumpRateModelContract.address);
   console.log("mUSD:                     " + mUSDContract.address);
   console.log("Eth interest rate model:   " + WhitePaperModelContract.address);
-  console.log("mETH:                     " + mEtherContract.address);
+  console.log("mETH:                     " + mEVMOSContract.address);
   console.log(
     "USDC interest rate model:  " + USDCJumpRateModelContract.address
   );
