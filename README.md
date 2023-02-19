@@ -1,3 +1,13 @@
+# Quickstart
+`yarn`
+
+Get the addresses for the various assets and oracles, and which asset will be used for PSM. If needed, deploy a simple CW20<>ERC20 wrapper for USDX if that's the main asset for the PSM
+https://feeds.witnet.io/kava/kava-mainnet_kava-usd_6
+
+Not sure which bridged assets are the most popular - so figuring which asset for ETH and USDC is used here. 
+
+If we need an adapter for whatever oracle is used, that as well (if it isn't chainlink)
+
 # BAO Markets (a.k.a. HardSynths)
 
 For those who want to dive into the protocol early we recommend familiarizing yourself with the compound protocol:
