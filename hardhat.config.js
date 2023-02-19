@@ -19,16 +19,6 @@ module.exports = {
         accounts: [process.env.PRIVATE_KEY],
       },
     },
-    // goerli: {
-    //   url: process.env.GOERLI_URL,
-    //   //Consider any address posted here to be compromised
-    //   accounts: [process.env.PRIVATE_KEY_1, process.env.PRIVATE_KEY_2],
-    // },
-    arbitrum: {
-      url: process.env.ARBITRUM_URL,
-      //Consider any address posted here to be compromised
-      accounts: [process.env.PRIVATE_KEY],
-    },
   },
   solidity: {
     compilers: [
@@ -75,4 +65,5 @@ module.exports = {
       9001: 0, // use the same address on evmos mainnnet
       3: 0, // use the same address on ropsten
     },
+  }
 };
